@@ -1301,3 +1301,5 @@
     s_copyvarifnotzero 0x8001, p388
     s_callstd 0
 .endmacro
+
+LASTRESULT equ 0x800D
