@@ -170,7 +170,10 @@ exit_code = subprocess.run([
     "-equ",
     "free_space",
     f"{find_needed_words(needed_words, free_space)}",
-    "main.asm"
+    "main.asm",
+    "-equ",
+    "reservation",
+    f"{reserve}",
 ]).returncode
 
 if exit_code != 0:
