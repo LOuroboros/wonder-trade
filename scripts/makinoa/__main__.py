@@ -15,6 +15,7 @@ os.chdir(cmdlineargparser.parse_args().root)
 
 # parse config.ini, if it exists
 iniparser = configparser.ConfigParser(allow_no_value=True)
+iniparser.optionxform = str
 
 try:
     with open("config.ini", "r", encoding="UTF-8") as ini:
