@@ -3,14 +3,15 @@
 
 .open "test.gba", 0x08000000
 
-.org free_space
-.importobj "build/src/relocatable.o"
-
 .loadtable "character-encoding.tbl"
 .include "pokescript.s"
 
-wonder_trade_script:
-.area reservation
+.org allocation
+
+.area allocation_size
+    .importobj "build/src/relocatable.o"
+
+    wonder_trade_script:
     .include "script.asm"
 .endarea
 
