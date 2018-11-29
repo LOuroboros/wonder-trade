@@ -9,7 +9,7 @@
 .org allocation
 
 .area allocation_size
-    .importobj "build/src/relocatable.o"
+    .importobj "obj/relocatable.o"
 
     wonder_trade_script:
     .include "script.asm"

@@ -8,11 +8,9 @@ The NPC trainers are used as the source of these Pokemon; you might end up with 
 
 First, you need to insert [dtan](https://github.com/Sagiri/dtan) to your ROM. Then, copy the output rom `test.gba` to this project's root directory, renaming it `rom.gba`.
 
-Open up `config.ini` and modify `free_space` so that the build system knows where to start looking for free space in your ROM. 
+Open up `config.ini` and modify `free-space` so that the build system knows where to start looking for free space in your ROM.
 
-Next, run `python3 scripts/makinoa` from the project root directory. This requires `devkitARM` and `armips` (and their associated environment variables).
-
-The output ROM will be called `test.gba`.
+Once you've configured everything, you can check [here](scripts/makinoa/README.md) for build instructions.
 
 #### How do I use this?
 
