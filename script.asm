@@ -1,3 +1,6 @@
+.include "pokescript.s"
+.loadtable "character-encoding.tbl"
+
 @@main:
     lock
     faceplayer

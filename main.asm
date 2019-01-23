@@ -3,9 +3,6 @@
 
 .open "test.gba", 0x08000000
 
-.loadtable "character-encoding.tbl"
-.include "pokescript.s"
-
 .org allocation
 
 .area allocation_size
