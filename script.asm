@@ -1,45 +1,45 @@
 @@main:
-    s_lock
-    s_faceplayer
-    s_msgbox @@wanttostart, 0x5
+    lock
+    faceplayer
+    msgbox @@wanttostart, 0x5
 
     // if they don't want to WT, bail
-    s_compare LASTRESULT, 0x1
-    s_gotoif 0x0, @@earlyend
+    compare LASTRESULT, 0x1
+    gotoif 0x0, @@earlyend
 
-    s_msgbox @@choosepokemon, 0x6
+    msgbox @@choosepokemon, 0x6
 
     // opens party menu for selecting
-    s_special 0x9F
-    s_waitstate
+    special 0x9F
+    waitstate
 
     // if they pressed B to cancel, bail
-    s_compare 0x8004, 0x6
-    s_gotoif 0x4, @@earlyend
+    compare 0x8004, 0x6
+    gotoif 0x4, @@earlyend
 
     // if the chosen Pokémon is an egg, bail
-    s_special2 LASTRESULT, 0x147
-    s_compare LASTRESULT, 0x19C
-    s_gotoif 0x1, @@choseegg
+    special2 LASTRESULT, 0x147
+    compare LASTRESULT, 0x19C
+    gotoif 0x1, @@choseegg
 
-    s_msgbox @@partnersearch, 0x6
+    msgbox @@partnersearch, 0x6
 
     // load the Pokemon to be traded to the player
-    s_callasm (gen_random_pokemon |1)
+    callasm (gen_random_pokemon |1)
     // special 0xFE needs the player's Pokemon to be on 0x8005
-    s_copyvar 0x8005, 0x8004
+    copyvar 0x8005, 0x8004
     // actually do the trade animation
-    s_special 0xFE
-    s_waitstate
+    special 0xFE
+    waitstate
 
 @@earlyend:
-    s_msgbox @@comebacksoon, 0x6
-    s_release
-    s_end
+    msgbox @@comebacksoon, 0x6
+    release
+    end
 
 @@choseegg:
-    s_msgbox @@noeggsallowed, 0x6
-    s_goto @@earlyend
+    msgbox @@noeggsallowed, 0x6
+    goto @@earlyend
 
 @@wanttostart:
     .string "Would you like to start a\nWONDER TRADE?"
