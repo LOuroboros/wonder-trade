@@ -1,7 +1,7 @@
 .gba
 .thumb
 
-.open "test.gba", 0x08000000
+.open "rom.gba", "test.gba", 0x08000000
 
 .org allocation
 
