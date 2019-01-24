@@ -1,4 +1,4 @@
-#include "defines.h"
+#include "global.h"
 
 void gen_random_pokemon() {
     u16 tid;
