@@ -3,6 +3,8 @@
 import os, sys, argparse, configparser, shutil, subprocess, fnmatch, itertools
 import os.path
 import kewensis
+from orderedset import OrderedSet
+from collections import OrderedDict
 
 src = "src"
 build = "build"
@@ -28,9 +30,9 @@ except FileNotFoundError:
 free_space = iniparser.get("main", "free-space", fallback="0x08800000")
 optimization_level = iniparser.get("main", "optimization-level", fallback="-O2")
 reserve = iniparser.get("main", "reserve", fallback="0")
-static_objects = set() if "static" not in iniparser else set(iniparser["static"])
-defines = {} if "defines" not in iniparser else dict(iniparser["defines"])
-libgcc = set() if "libgcc" not in iniparser else set(iniparser["libgcc"])
+static_objects = OrderedSet() if "static" not in iniparser else OrderedSet(iniparser["static"])
+defines = OrderedDict() if "defines" not in iniparser else OrderedDict(iniparser["defines"])
+libgcc = OrderedSet() if "libgcc" not in iniparser else OrderedSet(iniparser["libgcc"])
 
 try:
     free_space = int(free_space, 16)
@@ -64,6 +66,7 @@ if not os.path.exists(DEVKITARM):
 
 CC = os.path.join(DEVKITARM, "bin", "arm-none-eabi-gcc")
 LD = os.path.join(DEVKITARM, "bin", "arm-none-eabi-ld")
+SIZE = os.path.join(DEVKITARM, "bin", "arm-none-eabi-size")
 
 CFLAGS = [
     optimization_level,
@@ -85,7 +88,12 @@ LDFLAGS = [
     "--relocatable"
 ]
 
-relocatable_objects = set()
+SIZEFLAGS = [
+    "-d",
+    "-B"
+]
+
+relocatable_objects = OrderedSet()
 
 if os.path.exists(src):
     for srcfile in (path for path in os.listdir(src) if fnmatch.fnmatch(path, "*.c")):
@@ -126,6 +134,14 @@ if libgcc:
         if not libgcc:
             break
 
+needed_words = 0
+
+def round_up_to_4(x):
+    if x & 0x3 == 0:
+        return x
+    else:
+        return round_up_to_4(x + 1)
+
 if relocatable_objects:
     exit_code = subprocess.run([
         LD,
@@ -138,17 +154,24 @@ if relocatable_objects:
     if exit_code != 0:
         print("Error :: Linking failed.")
         sys.exit(exit_code)
-        
-def round_up_to_4(x):
-    if x & 0x3 == 0:
-        return x
-    else:
-        return round_up_to_4(x + 1)
+
+    rslt = subprocess.run([
+        SIZE,
+        *SIZEFLAGS,
+        relocatable
+    ], stdout=subprocess.PIPE)
+
+    if rslt.returncode != 0:
+        print("Error :: Size calculation failed.")
+        sys.exit(rslt.returncode)
+
+    sz = int(rslt.stdout.decode("UTF-8").split("\n")[1].split()[3])
+
+    needed_words = round_up_to_4(sz + reserve) >> 2
 
 offset_mask = 0x08000000
 free_space |= offset_mask
 
-needed_words = round_up_to_4(os.stat(relocatable).st_size + reserve) >> 2
 free_space = round_up_to_4(free_space)
 
 def find_needed_words(needed_words, free_space):
@@ -176,7 +199,7 @@ def find_needed_words(needed_words, free_space):
 
     return start ^ offset_mask
 
-shutil.copy("rom.gba", "test.gba")
+# shutil.copy("rom.gba", "test.gba")
 
 if "ARMIPS" in os.environ:
     ARMIPS = os.environ["ARMIPS"]
