@@ -13,7 +13,7 @@ struct trainer {
     u8 music : 7;
     u8 gender : 1;
     u8 sprite;
-    u8 name[12];
+    char name[12];
     u8 data[8];
     u8 double_flag;
     u8 data2[7];

@@ -23,7 +23,7 @@ void gen_random_pokemon() {
     pokemon_setattr(&party_trader[0], REQ_METLOC, &location);
 }
 
-u32 strnlen(u8* str, u32 max) {
+u32 strnlen(const char* str, u32 max) {
     u32 len = 0;
     while(*str != 0xFF && len < max) {
         ++len;
